@@ -1550,7 +1550,7 @@ void enqueue(
   if (!rdy_head[q]) {		/* add to empty queue */
       rdy_head[q] = rdy_tail[q] = rp; 		/* create a new queue */
       rp->p_nextready = NULL;		/* mark new end */
-  } else if (q == 0 || rp->ddl == ~0U) { 
+  } else if (rp->ddl == ~0U) { 
       /* add to tail of queue */
       rdy_tail[q]->p_nextready = rp;     /* chain tail of queue */
       rdy_tail[q] = rp;                  /* set new queue tail */
@@ -1581,7 +1581,8 @@ void enqueue(
 	  struct proc * p;
 	  p = get_cpulocal_var(proc_ptr);
 	  assert(p);
-	  if((p->p_priority > rp->p_priority) &&
+      int condition = (p->p_priority == rp->p_priority) && (p->ddl > rp->ddl);
+	  if((p->p_priority > rp->p_priority || condition) &&
 			  (priv(p)->s_flags & PREEMPTIBLE))
 		  RTS_SET(p, RTS_PREEMPTED); /* calls dequeue() */
   }
