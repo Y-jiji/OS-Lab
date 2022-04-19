@@ -134,7 +134,7 @@ void proc_init(void)
 		rp->p_scheduler = NULL;		/* no user space scheduler */
 		rp->p_priority = 0;		/* no priority */
 		rp->p_quantum_size_ms = 0;	/* no quantum size */
-
+        rp->ddl = ~0u; /* no deadline */
 		/* arch-specific initialization */
 		arch_proc_reset(rp);
 	}
@@ -154,6 +154,7 @@ void proc_init(void)
 		ip->p_priv = &idle_priv;
 		/* must not let idle ever get scheduled */
 		ip->p_rts_flags |= RTS_PROC_STOP;
+        ip->ddl = ~0u;
 		set_idle_name(ip->p_name, i);
 	}
 }
