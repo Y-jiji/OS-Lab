@@ -50,6 +50,7 @@ SRCS+=  \
 	srv_kill.c \
 	stacktrace.c \
 	sys_abort.c \
+	sys_chrt.c \
 	sys_clear.c \
 	sys_cprof.c \
 	sys_diagctl.c \
