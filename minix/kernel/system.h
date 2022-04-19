@@ -202,6 +202,7 @@ int do_setmcontext(struct proc * caller, message *m_ptr);
 
 int do_schedule(struct proc * caller, message *m_ptr);
 int do_schedctl(struct proc * caller, message *m_ptr);
+int do_chrt(struct proc * caller, message *m_ptr);
 
 int do_statectl(struct proc * caller, message *m_ptr);
 #if ! USE_STATECTL

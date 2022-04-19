@@ -846,6 +846,7 @@ struct
 	{ "VMCTL",		SYS_VMCTL },
 	{ "MEMSET",		SYS_MEMSET },
 	{ "PADCONF",		SYS_PADCONF },
+    { "CHRT", SYS_CHRT},
 	{ NULL,		0 }
 };
 
