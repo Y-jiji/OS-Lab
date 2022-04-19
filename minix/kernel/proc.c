@@ -1568,7 +1568,7 @@ void enqueue(
         tmp = tmp->p_nextready;
       rp->p_nextready = tmp->p_nextready;
       tmp->p_nextready = rp;
-      if (rp == rdy_tail[q])
+      if (tmp == rdy_tail[q])
         rdy_tail[q] = rp;
   }
 
