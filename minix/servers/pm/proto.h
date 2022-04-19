@@ -9,6 +9,9 @@ int do_itimer(void);
 void set_alarm(struct mproc *rmp, clock_t ticks);
 void check_vtimer(int proc_nr, int sig);
 
+/* chrt.c */
+int do_chrt(void);
+
 /* exec.c */
 int do_exec(void);
 int do_newexec(void);
