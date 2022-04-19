@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "times.h": "c",
-        "time.h": "c"
+        "time.h": "c",
+        "pm.h": "c",
+        "syslib.h": "c"
     }
 }
