@@ -93,6 +93,7 @@ int	chown(const char *, uid_t, gid_t) __RENAME(__posix_chown);
 #else
 int	chown(const char *, uid_t, gid_t);
 #endif /* defined(_POSIX_C_SOURCE) || defined(_XOPEN_SOURCE) */
+int  chrt(unsigned long);
 int	 close(int);
 size_t	 confstr(int, char *, size_t);
 #ifndef __CUSERID_DECLARED
