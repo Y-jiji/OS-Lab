@@ -1625,8 +1625,9 @@ static void enqueue_head(struct proc *rp)
 	 rdy_head[q] = rdy_tail[q] = rp; 	/* create a new queue */
 	 rp->p_nextready = NULL;			/* mark new end */
    } else {					/* add to head of queue */
-	 rp->p_nextready = rdy_head[q];		/* chain head of queue */
-	 rdy_head[q] = rp;			/* set new queue head */
+      rdy_tail[q]->p_nextready = rp;     /* chain tail of queue */
+      rdy_tail[q] = rp;                  /* set new queue tail */
+      rp->p_nextready = NULL;            /* mark new end */
    }
   /* Make note of when this process was added to queue */
   read_tsc_64(&(get_cpulocal_var(proc_ptr->p_accounting.enter_queue)));
