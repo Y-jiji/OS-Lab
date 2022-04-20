@@ -1536,7 +1536,7 @@ void enqueue(
  * This function can be used x-cpu as it always uses the queues of the cpu the
  * process is assigned to.
  */
-  int q = (~rp->ddl) ? rp->p_priority : 7;	 /* scheduling queue to use */
+  int q = (~rp->ddl) ? rp->p_priority : 8;	 /* scheduling queue to use */
   struct proc **rdy_head, **rdy_tail;
   
   assert(proc_is_runnable(rp));
@@ -1600,7 +1600,7 @@ void enqueue(
  */
 static void enqueue_head(struct proc *rp)
 {
-  int q = (~rp->ddl) ? 7 : rp->p_priority;	 		/* scheduling queue to */
+  int q = (~rp->ddl) ? 8 : rp->p_priority;	 		/* scheduling queue to */
   struct proc **rdy_head, **rdy_tail;
 
   assert(proc_ptr_ok(rp));
@@ -1653,7 +1653,7 @@ void dequeue(struct proc *rp)
  * queue of the cpu the process is currently assigned to.
  */
   int q = rp->p_priority;		/* queue to use */
-  if (~rp->ddl) q = 7;
+  if (~rp->ddl) q = 8;
   struct proc **xpp;			/* iterate over queue */
   struct proc *prev_xp;
   u64_t tsc, tsc_delta;
@@ -1732,7 +1732,7 @@ static struct proc * pick_proc(void)
 		TRACE(VF_PICKPROC, printf("cpu %d queue %d empty\n", cpuid, q););
 		continue;
 	}
-    if (q == 7) {
+    if (q == 8) {
         struct proc *tmp = rp;
         uint32_t ddl = tmp->ddl;
         while (tmp->p_nextready) {
