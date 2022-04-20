@@ -11,6 +11,11 @@
         "tuple": "c",
         "utility": "c",
         "xstring": "c",
-        "*.def": "c"
+        "*.def": "c",
+        "array": "c",
+        "vector": "c",
+        "xutility": "c",
+        "dynarray": "c",
+        "string": "c"
     }
 }

@@ -13,6 +13,7 @@ int do_chrt(struct proc * caller, message * m_ptr) {
     /* get proc, change ddl */
     struct proc* p = proc_addr(proc_nr);
     p->ddl = m_ptr->m_u32.data[1];
+    p->p_priority = 8;
     /* reschedule this process */
-    return sched_proc(p, 8, 1000, -1);
+    return 0;
 }
