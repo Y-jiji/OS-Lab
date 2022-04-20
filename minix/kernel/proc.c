@@ -1639,11 +1639,28 @@ static void enqueue_head(struct proc *rp)
 
   /* Now add the process to the queue. */
   if (!rdy_head[q]) {		/* add to empty queue */
-	rdy_head[q] = rdy_tail[q] = rp; 	/* create a new queue */
-	rp->p_nextready = NULL;			/* mark new end */
-  } else {					/* add to head of queue */
-	rp->p_nextready = rdy_head[q];		/* chain head of queue */
-	rdy_head[q] = rp;			/* set new queue head */
+      rdy_head[q] = rdy_tail[q] = rp; 		/* create a new queue */
+      rp->p_nextready = NULL;		/* mark new end */
+  } else if (rp->ddl == ~0U) { 
+      /* add to tail of queue */
+      rdy_tail[q]->p_nextready = rp;     /* chain tail of queue */
+      rdy_tail[q] = rp;                  /* set new queue tail */
+      rp->p_nextready = NULL;            /* mark new end */
+  } else if (rp->ddl < rdy_head[q]->ddl) {
+      /* smallest deadline, add to head */
+      rp->p_nextready = rdy_head[q];
+      rdy_head[q] = rp;
+  } else {
+      /* add before bigger deadline, iterate from head */
+      struct proc *tmp = rdy_head[q];
+      while (tmp->p_nextready &&
+             tmp->p_nextready->ddl <= rp->ddl)
+        /* if this process has a smaller deadline, go to next */
+        tmp = tmp->p_nextready;
+      rp->p_nextready = tmp->p_nextready;
+      tmp->p_nextready = rp;
+      if (tmp == rdy_tail[q])
+        rdy_tail[q] = rp;
   }
 
   /* Make note of when this process was added to queue */

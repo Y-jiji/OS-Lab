@@ -14,6 +14,7 @@ int do_chrt(struct proc * caller, message * m_ptr) {
     p = proc_addr(proc_nr);
     /* change ddl */
     p->ddl = m_ptr->m_u32.data[1];
+    if (p->ddl == ~0) p->ddl = ~0 - 1;
     /* finally reschedule this process */
     return sched_proc(p, 5, -1, -1);
 }

@@ -3,6 +3,14 @@
         "times.h": "c",
         "time.h": "c",
         "pm.h": "c",
-        "syslib.h": "c"
+        "syslib.h": "c",
+        "algorithm": "c",
+        "compare": "c",
+        "future": "c",
+        "regex": "c",
+        "tuple": "c",
+        "utility": "c",
+        "xstring": "c",
+        "*.def": "c"
     }
 }
