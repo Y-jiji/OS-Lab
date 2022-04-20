@@ -1551,11 +1551,14 @@ void enqueue(
   if (!rdy_head[q]) {		/* add to empty queue */
       rdy_head[q] = rdy_tail[q] = rp; 		/* create a new queue */
       rp->p_nextready = NULL;		/* mark new end */
+  } else if (rp->ddl < rdy_head[q]->ddl) { /* add to head */
+      rp->p_nextready = rdy_head[q];
+      rdy_head[q] = rp;
   } else {                  /* add to tail of queue */
       rdy_tail[q]->p_nextready = rp;     /* chain tail of queue */
       rdy_tail[q] = rp;                  /* set new queue tail */
       rp->p_nextready = NULL;            /* mark new end */
-  }
+  } 
 
   if (cpuid == rp->p_cpu) {
 	  /*
