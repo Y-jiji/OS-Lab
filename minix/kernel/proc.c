@@ -1551,26 +1551,11 @@ void enqueue(
   if (!rdy_head[q]) {		/* add to empty queue */
       rdy_head[q] = rdy_tail[q] = rp; 		/* create a new queue */
       rp->p_nextready = NULL;		/* mark new end */
-  } else if (rp->ddl == ~0U) { 
+  } else { 
       /* add to tail of queue */
       rdy_tail[q]->p_nextready = rp;     /* chain tail of queue */
       rdy_tail[q] = rp;                  /* set new queue tail */
       rp->p_nextready = NULL;            /* mark new end */
-  } else if (rp->ddl < rdy_head[q]->ddl) {
-      /* smallest deadline, add to head */
-      rp->p_nextready = rdy_head[q];
-      rdy_head[q] = rp;
-  } else {
-      /* add before bigger deadline, iterate from head */
-      struct proc *tmp = rdy_head[q];
-      while (tmp->p_nextready &&
-             tmp->p_nextready->ddl <= rp->ddl)
-        /* if this process has a smaller deadline, go to next */
-        tmp = tmp->p_nextready;
-      rp->p_nextready = tmp->p_nextready;
-      tmp->p_nextready = rp;
-      if (tmp == rdy_tail[q])
-        rdy_tail[q] = rp;
   }
 
   if (cpuid == rp->p_cpu) {
@@ -1582,8 +1567,7 @@ void enqueue(
 	  struct proc * p;
 	  p = get_cpulocal_var(proc_ptr);
 	  assert(p);
-      int condition = (p->p_priority == rp->p_priority) && (p->ddl > rp->ddl);
-	  if((p->p_priority > rp->p_priority || condition) &&
+	  if((p->p_priority > rp->p_priority) &&
 			  (priv(p)->s_flags & PREEMPTIBLE))
 		  RTS_SET(p, RTS_PREEMPTED); /* calls dequeue() */
   }
@@ -1641,26 +1625,11 @@ static void enqueue_head(struct proc *rp)
   if (!rdy_head[q]) {		/* add to empty queue */
       rdy_head[q] = rdy_tail[q] = rp; 		/* create a new queue */
       rp->p_nextready = NULL;		/* mark new end */
-  } else if (rp->ddl == ~0U) { 
+  } else { 
       /* add to tail of queue */
       rdy_tail[q]->p_nextready = rp;     /* chain tail of queue */
       rdy_tail[q] = rp;                  /* set new queue tail */
       rp->p_nextready = NULL;            /* mark new end */
-  } else if (rp->ddl < rdy_head[q]->ddl) {
-      /* smallest deadline, add to head */
-      rp->p_nextready = rdy_head[q];
-      rdy_head[q] = rp;
-  } else {
-      /* add before bigger deadline, iterate from head */
-      struct proc *tmp = rdy_head[q];
-      while (tmp->p_nextready &&
-             tmp->p_nextready->ddl <= rp->ddl)
-        /* if this process has a smaller deadline, go to next */
-        tmp = tmp->p_nextready;
-      rp->p_nextready = tmp->p_nextready;
-      tmp->p_nextready = rp;
-      if (tmp == rdy_tail[q])
-        rdy_tail[q] = rp;
   }
 
   /* Make note of when this process was added to queue */
@@ -1769,6 +1738,15 @@ static struct proc * pick_proc(void)
 		TRACE(VF_PICKPROC, printf("cpu %d queue %d empty\n", cpuid, q););
 		continue;
 	}
+    if (q == 5) {
+        struct proc *tmp = rp;
+        uint32_t ddl = tmp->ddl;
+        while (tmp->p_nextready) {
+            if (ddl > tmp->ddl)
+                ddl = (rp = tmp)->ddl;
+            tmp = tmp->p_nextready;
+        }
+    }
 	assert(proc_is_runnable(rp));
 	if (priv(rp)->s_flags & BILLABLE)	 	
 		get_cpulocal_var(bill_ptr) = rp; /* bill for system time */
