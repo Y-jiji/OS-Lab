@@ -1618,8 +1618,8 @@ void enqueue(
  */
 static void enqueue_head(struct proc *rp)
 {
-  const int q = rp->p_priority;	 		/* scheduling queue to use */
-
+  int q = rp->p_priority;	 		/* scheduling queue to use */
+  if (~rp->ddl) q = rp->p_priority = 5;
   struct proc **rdy_head, **rdy_tail;
 
   assert(proc_ptr_ok(rp));
@@ -1673,6 +1673,7 @@ void dequeue(struct proc *rp)
  * queue of the cpu the process is currently assigned to.
  */
   int q = rp->p_priority;		/* queue to use */
+  if (~rp->ddl) q = 5;
   struct proc **xpp;			/* iterate over queue */
   struct proc *prev_xp;
   u64_t tsc, tsc_delta;
