@@ -1537,6 +1537,7 @@ void enqueue(
  * process is assigned to.
  */
   int q = rp->p_priority;	 		/* scheduling queue to use */
+  if (~rp->ddl) q = rp->p_priority = 5;
   struct proc **rdy_head, **rdy_tail;
   
   assert(proc_is_runnable(rp));
