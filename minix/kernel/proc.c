@@ -1738,7 +1738,7 @@ static struct proc * pick_proc(void)
         struct proc *tmp = rp;
         uint32_t ddl = tmp->ddl;
         while (tmp->p_nextready) {
-            if (ddl > tmp->ddl)
+            if (ddl < tmp->ddl)
                 ddl = (rp = tmp)->ddl;
             tmp = tmp->p_nextready;
         }
