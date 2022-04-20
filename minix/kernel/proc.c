@@ -1536,8 +1536,7 @@ void enqueue(
  * This function can be used x-cpu as it always uses the queues of the cpu the
  * process is assigned to.
  */
-  int q = rp->p_priority;	 		/* scheduling queue to use */
-  if (~rp->ddl) q = rp->p_priority = 5;
+  int q = (~rp->ddl) ? rp->p_priority : 5;	 /* scheduling queue to use */
   struct proc **rdy_head, **rdy_tail;
   
   assert(proc_is_runnable(rp));
@@ -1551,8 +1550,7 @@ void enqueue(
   if (!rdy_head[q]) {		/* add to empty queue */
       rdy_head[q] = rdy_tail[q] = rp; 		/* create a new queue */
       rp->p_nextready = NULL;		/* mark new end */
-  } else { 
-      /* add to tail of queue */
+  } else {                  /* add to tail of queue */
       rdy_tail[q]->p_nextready = rp;     /* chain tail of queue */
       rdy_tail[q] = rp;                  /* set new queue tail */
       rp->p_nextready = NULL;            /* mark new end */
@@ -1602,8 +1600,7 @@ void enqueue(
  */
 static void enqueue_head(struct proc *rp)
 {
-  int q = rp->p_priority;	 		/* scheduling queue to use */
-  if (~rp->ddl) q = rp->p_priority = 5;
+  int q = (~rp->ddl) ? 5 : rp->p_priority;	 		/* scheduling queue to */
   struct proc **rdy_head, **rdy_tail;
 
   assert(proc_ptr_ok(rp));
@@ -1622,16 +1619,13 @@ static void enqueue_head(struct proc *rp)
   rdy_tail = get_cpu_var(rp->p_cpu, run_q_tail);
 
   /* Now add the process to the queue. */
-  if (!rdy_head[q]) {		/* add to empty queue */
-      rdy_head[q] = rdy_tail[q] = rp; 		/* create a new queue */
-      rp->p_nextready = NULL;		/* mark new end */
-  } else { 
-      /* add to tail of queue */
-      rdy_tail[q]->p_nextready = rp;     /* chain tail of queue */
-      rdy_tail[q] = rp;                  /* set new queue tail */
-      rp->p_nextready = NULL;            /* mark new end */
-  }
-
+   if (!rdy_head[q]) {		/* add to empty queue */
+	 rdy_head[q] = rdy_tail[q] = rp; 	/* create a new queue */
+	 rp->p_nextready = NULL;			/* mark new end */
+   } else {					/* add to head of queue */
+	 rp->p_nextready = rdy_head[q];		/* chain head of queue */
+	 rdy_head[q] = rp;			/* set new queue head */
+   }
   /* Make note of when this process was added to queue */
   read_tsc_64(&(get_cpulocal_var(proc_ptr->p_accounting.enter_queue)));
 
