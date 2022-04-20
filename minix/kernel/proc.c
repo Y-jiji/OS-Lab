@@ -1536,7 +1536,8 @@ void enqueue(
  * This function can be used x-cpu as it always uses the queues of the cpu the
  * process is assigned to.
  */
-  int q = (~rp->ddl) ? rp->p_priority : 8;	 /* scheduling queue to use */
+  int q = rp->p_priority;    /* scheduling queue to use */
+  if(~rp->ddl) q = rp->p_priority = 8;
   struct proc **rdy_head, **rdy_tail;
   
   assert(proc_is_runnable(rp));
@@ -1600,7 +1601,8 @@ void enqueue(
  */
 static void enqueue_head(struct proc *rp)
 {
-  int q = (~rp->ddl) ? 8 : rp->p_priority;	 		/* scheduling queue to */
+  int q = rp->p_priority; /* scheduling queue to use */
+  if(~rp->ddl) q = rp->p_priority = 8;
   struct proc **rdy_head, **rdy_tail;
 
   assert(proc_ptr_ok(rp));
