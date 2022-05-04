@@ -34,7 +34,7 @@
 #include "local.h"
 
 /* ramdisks (/dev/ram*) */
-#define RAMDISKS     6
+#define RAMDISKS     7
 
 #define RAM_DEV_LAST (RAM_DEV_FIRST+RAMDISKS-1)
 
