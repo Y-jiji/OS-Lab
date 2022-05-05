@@ -39,10 +39,11 @@ int make_big(int fsize, char* fpath) {
     for (int i = 0; i < 128 * KB; i++)
         buff[i] = rand() % 10 + '0';
     int fd = open(fpath, O_CREAT | O_TRUNC | O_WRONLY);
+    int step = (fsize / (128 * KB) + 1) / 32;
     printf("[");
     for (int i = 0; i < fsize / (128 * KB) + 1; i++) {
         write(fd, buff, 128 * KB);
-        printf("=");
+        if (i != 0 && i % step == 0) printf("=");
     }
     close(fd);
     printf("]\n");
