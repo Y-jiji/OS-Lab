@@ -96,13 +96,14 @@ void do_test(
     double throughput = (double)(byte_cnt) / (double)(secs);
 
     /* print data to row */
-    char row[1024];
+    char row[256];
+    memset(row,0,sizeof(row));
     sprintf(row, "%d, %d, %d, %d, %d, %d, %.4lf\r\n",
             test_id, proc_id, isdisk, iswrite, isordered, bsize, throughput);
 
     /* open serial device, flush one data row */
     int data_fd = open("/dev/tty00", O_WRONLY);
-    write(data_fd, row, 1024);
+    write(data_fd, row, 256);
     close(data_fd);
 
     /* exit this proc */
