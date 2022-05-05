@@ -24,7 +24,7 @@ const int numproc[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
 const int rep = 8;
 
 /* each test proc run secs time before termination */
-const int secs = 7;
+const int secs = 8;
 
 /* whether the alarm signal arrived */
 volatile int alarm_sig_arrived = 0;
@@ -143,7 +143,7 @@ int test_one_rep(
     int fsize = tot_fsize / proc_num + 1;
     for (int r = 0; r < rep; r++) {
         printf("\n\n");
-        printf("test [%-2d] procs [%-2d]    \n", r, proc_num);
+        printf("test [%-2d] procs [%-2d]\n", r, proc_num);
         printf("--------------------------------------------------\n");
         int cpid[proc_num];
         for (int i = 0; i < proc_num; i++) {
@@ -162,6 +162,7 @@ int test_one_rep(
                 continue;
             }
             do_test(r, i + 1, isdisk, iswrite, isordered, bsize, fsize);
+            return 0;
         }
         for (int i = 0; i < proc_num; i++)
             waitpid(cpid[i], NULL, 0);
@@ -189,7 +190,15 @@ int main() {
     srand((unsigned)time(NULL));
     /* add heading */
     int data_fd = open("/dev/tty00", O_WRONLY);
-    char* heading = "repeat_id, pid, ram_or_disk , read_or_write, ordered_or_random, block_size, throughput(per_second), latency(second_per_io)\n";
+    char* heading =
+        "repeat_id, "
+        "pid, "
+        "ram_or_disk, "
+        "read_or_write, "
+        "ordered_or_random, "
+        "block_size, "
+        "throughput(per_second), "
+        "latency(second_per_io)\n";
     write(data_fd, heading, strlen(heading));
     close(data_fd);
     /* run all the tests */
