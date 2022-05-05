@@ -132,7 +132,7 @@ int test_one_rep(
     int fsize = tot_fsize / proc_num + 1;
     for (int r = 0; r < rep; r++) {
         printf("==============================\n");
-        printf("    test [%4d] procs [%4d]    \n", r, proc_num);
+        printf("|   test [%4d] procs [%4d]   |\n", r, proc_num);
         printf("==============================\n");
         int cpid[proc_num];
         for (int i = 0; i < proc_num; i++) {
