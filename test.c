@@ -68,7 +68,7 @@ void do_test(
 
     /* if is disk, choose disk dir, else choose ram dir */
     char* dir = isdisk ? DSK_DIR : RAM_DIR;
-    sprintf(fpath, "%s/%03d%05d%01d%01d%01d%01d",
+    sprintf(fpath, "%s/%03d%05d%01d%01d%01d%05d",
             dir, test_id, proc_id, isdisk, iswrite, isordered, bsize);
 
     /* open file at fpath, mind that we use O_SYNC flag to keep all data flushed to the mem hardware */
@@ -144,13 +144,21 @@ int test_one_rep(
     for (int r = 0; r < rep; r++) {
         printf("\n\n");
         printf("test [%-2d] procs [%-2d]\n", r, proc_num);
+        printf(
+            "device [%s]"
+            " [%s] [%s] [%s] [%d KB]",
+            isdisk ? "disk" : "ram",
+            iswrite ? "write" : "read",
+            isordered ? "ordered" : "random",
+            bsize / KB
+        );
         printf("--------------------------------------------------\n");
         int cpid[proc_num];
         for (int i = 0; i < proc_num; i++) {
             /* if is disk, choose disk dir, else choose ram dir */
             char fpath[128];
             char* dir = isdisk ? DSK_DIR : RAM_DIR;
-            sprintf(fpath, "%s/%03d%05d%01d%01d%01d%01d",
+            sprintf(fpath, "%s/%03d%05d%01d%01d%01d%05d",
                     dir, r, i + 1, isdisk, iswrite, isordered, bsize);
             /* make file with given size (because we want to do some lseek tests) */
             create_big(fsize, fpath);
@@ -173,7 +181,7 @@ int test_one_rep(
             /* if is disk, choose disk dir, else choose ram dir */
             char fpath[128];
             char* dir = isdisk ? DSK_DIR : RAM_DIR;
-            sprintf(fpath, "%s/%03d%05d%01d%01d%01d%01d",
+            sprintf(fpath, "%s/%03d%05d%01d%01d%01d%05d",
                     dir, r, i + 1, isdisk, iswrite, isordered, bsize);
             /* remove files (leave space for further use) */
             printf("remove [%s]\n", fpath);
