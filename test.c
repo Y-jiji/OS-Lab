@@ -131,9 +131,9 @@ int test_one_rep(
     /* file size attached to each test */
     int fsize = tot_fsize / proc_num + 1;
     for (int r = 0; r < rep; r++) {
-        printf("==============================\n");
-        printf("|  test [%2d] procs [%2d]  |\n", r, proc_num);
-        printf("==============================\n");
+        printf("------------------------------\n");
+        printf("    test [%2d] procs [%2d]    \n", r, proc_num);
+        printf("------------------------------\n");
         int cpid[proc_num];
         for (int i = 0; i < proc_num; i++) {
             /* if is disk, choose disk dir, else choose ram dir */
