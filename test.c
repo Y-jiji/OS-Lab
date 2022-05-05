@@ -34,7 +34,7 @@ const int tot_fsize = 400 * MB;
 
 /* make a file with given size */
 int create_big(int fsize, char* fpath) {
-    printf("creating & filling file [%s]\n", fpath);
+    printf("create & fill file [%s]\n", fpath);
     char buff[128 * KB];
     for (int i = 0; i < 128 * KB; i++)
         buff[i] = rand() % 10 + '0';
