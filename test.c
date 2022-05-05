@@ -21,10 +21,10 @@ const int blksize[] = {64, 256, 1 * KB, 4 * KB, 16 * KB, 64 * KB};
 const int numproc[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
 
 /* each test repeat rep times */
-const int rep = 1;
+const int rep = 5;
 
 /* each test proc run secs time before termination */
-const int secs = 1;
+const int secs = 7;
 
 /* whether the alarm signal arrived */
 volatile int alarm_sig_arrived = 0;
@@ -209,15 +209,11 @@ int main() {
     write(data_fd, heading, strlen(heading));
     close(data_fd);
     /* run all the tests */
-    for (volatile int iswrite = 0; iswrite < 2; iswrite++) {
-        for (volatile int i = 0; i < sizeof(blksize) / sizeof(int); i++) {
-            for (volatile int j = 0; j < sizeof(numproc) / sizeof(int); j++) {
-                for (volatile int isordered = 0; isordered < 2; isordered++) {
-                    for (volatile int isdisk = 0; isdisk < 2; isdisk++) {
-                        if (numproc[j] > 100) {
-                            printf("err???????\n");
-                            return 0;
-                        }
+    for (int iswrite = 0; iswrite < 2; iswrite++) {
+        for (int i = 0; i < sizeof(blksize) / sizeof(int); i++) {
+            for (int j = 0; j < sizeof(numproc) / sizeof(int); j++) {
+                for (int isordered = 0; isordered < 2; isordered++) {
+                    for (int isdisk = 0; isdisk < 2; isdisk++) {
                         test_one_rep(
                             numproc[j],
                             isdisk,
