@@ -146,11 +146,11 @@ int test_one_rep(
         printf("test [%-2d] procs [%-2d]\n", r, proc_num);
         printf(
             "device [%s]"
-            " [%s] [%s] [%d KB]",
+            " [%s] [%s] [%.5f KB]\n",
             isdisk ? "disk" : "ram",
             iswrite ? "write" : "read",
             isordered ? "ordered" : "random",
-            bsize / KB
+            (double)bsize / (double)KB
         );
         printf("--------------------------------------------------\n");
         int cpid[proc_num];

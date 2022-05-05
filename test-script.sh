@@ -7,15 +7,15 @@ mknod /dev/myram b 1 13
 ls /dev/ | grep ram
 buildmyram 450 /dev/myram
 mkfs.mfs /dev/myram
-rm -r -f /root/myramtest
-mkdir /root/myramtest
-mount /dev/myram /root/myramtest
+rm -r -f /myramtest
+mkdir /myramtest
+mount /dev/myram /myramtest
 df
 echo "finished"
 
 echo "=== Disk ==="
-rm -r -f /root/mydisktest
-mkdir /root/mydisktest
+rm -r -f /mydisktest
+mkdir /mydisktest
 echo "finished"
 
 echo "=== Start Test ==="
