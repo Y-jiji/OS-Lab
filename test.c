@@ -22,6 +22,7 @@ const int numproc[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
 
 /* each test repeat rep times */
 const int rep = 16;
+
 /* each test proc run secs time before termination */
 const int secs = 2;
 
@@ -77,6 +78,9 @@ void do_test(
     /* byte count, initially 0 */
     long long byte_cnt = 0;
 
+    /* read/write cnt, initially 0 */
+    long long io_cnt = 0;
+
     /* set signal handler */
     printf("test [%04d] proc [%04d] set sig alarm\n", test_id, proc_id);
     signal(SIGALRM, alarm_handler);
@@ -93,7 +97,7 @@ void do_test(
         } else {
             oksize = read(fd, buf, bsize);
         }
-        if (~oksize) byte_cnt += oksize;
+        if (~oksize) byte_cnt += oksize, ++io_cnt;
         else printf("test [%04d] proc [%04d] fail\n", test_id, proc_id);
     }
 
@@ -104,12 +108,14 @@ void do_test(
     );
     /* calculate throughput, print data */
     double throughput = (double)(byte_cnt) / (double)(secs);
+    double latency = (double)(secs) / (double)(io_cnt);
 
     /* print data to row */
     char row[256];
     memset(row, 0, sizeof(row));
-    sprintf(row, "%d, %d, %d, %d, %d, %d, %.4lf\n",
-            test_id, proc_id, isdisk, iswrite, isordered, bsize, throughput);
+    sprintf(row, "%d, %d, %d, %d, %d, %d, %.4lf, %.4lf\n",
+            test_id, proc_id, isdisk, iswrite, isordered, bsize, 
+            throughput, latency);
 
     /* open serial device, flush one data row */
     printf("test [%04d] proc [%04d] printf data to serial\n",
@@ -179,7 +185,7 @@ int main() {
     srand((unsigned)time(NULL));
     /* add heading */
     int data_fd = open("/dev/tty00", O_WRONLY);
-    char* heading = "repeat_id, pid, ram_or_disk , read_or_write, ordered_or_random, block_size, throughput(per_second)\n";
+    char* heading = "repeat_id, pid, ram_or_disk , read_or_write, ordered_or_random, block_size, throughput(per_second), latency(second_per_io)\n";
     write(data_fd, heading, strlen(heading));
     close(data_fd);
     /* run all the tests */
