@@ -104,14 +104,14 @@ void do_test(
     /* print data to row */
     char row[256];
     memset(row,0,sizeof(row));
-    sprintf(row, "%d, %d, %d, %d, %d, %d, %.4lf\r\n",
+    sprintf(row, "%d, %d, %d, %d, %d, %d, %.4lf\n",
             test_id, proc_id, isdisk, iswrite, isordered, bsize, throughput);
 
     /* open serial device, flush one data row */
     printf("test [%04d] proc [%04d] printf data to serial\n", 
             test_id, proc_id);
     int data_fd = open("/dev/tty00", O_WRONLY);
-    write(data_fd, row, strlen(row) + 1);
+    write(data_fd, row, strlen(row));
     close(data_fd);
 
     /* exit this proc */
@@ -130,7 +130,7 @@ int test_one_rep(
     for (int r = 0; r < rep; r++) {
         printf("\n\n");
         printf("test [%-2d] procs [%-2d]    \n", r, proc_num);
-        printf("------------------------------------------\n");
+        printf("----------------------------------------------\n");
         int cpid[proc_num];
         for (int i = 0; i < proc_num; i++) {
             /* if is disk, choose disk dir, else choose ram dir */
@@ -161,7 +161,7 @@ int main() {
     /* add heading */
     int data_fd = open("/dev/tty00", O_WRONLY);
     char* heading = "repeat_id, pid, ram_or_disk , read_or_write, ordered_or_random, block_size, throughput(per_second)\n";
-    write(data_fd, heading, strlen(heading) + 1);
+    write(data_fd, heading, strlen(heading));
     close(data_fd);
     /* run all the tests */
     for (int isdisk = 0; isdisk < 2; isdisk++) {
