@@ -123,11 +123,11 @@ void do_test(
 }
 
 int test_one_rep(
-    int proc_num,  /* number of processes */
-    int isdisk,    /* whether this file is on disk */
-    int iswrite,   /* read test or write test */
-    int isordered, /* ordered test or random test */
-    int bsize      /* block size for each operation */
+    volatile int proc_num,  /* number of processes */
+    volatile int isdisk,    /* whether this file is on disk */
+    volatile int iswrite,   /* read test or write test */
+    volatile int isordered, /* ordered test or random test */
+    volatile int bsize      /* block size for each operation */
 ) {
     /* file size attached to each test */
     int fsize = tot_fsize / proc_num + 1;
