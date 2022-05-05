@@ -117,7 +117,7 @@ void do_test(
     /* print data to row */
     char row[256];
     memset(row, 0, sizeof(row));
-    sprintf(row, "%d, %d, %d, %d, %d, %d, %.4lf, %lf\n",
+    sprintf(row, "%d, %d, %d, %d, %d, %d, %.4lf, %.10lf\n",
             test_id, proc_id, isdisk, iswrite, isordered, bsize,
             throughput, latency);
 
