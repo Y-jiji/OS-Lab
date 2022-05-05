@@ -122,11 +122,14 @@ int test_one_rep(
         int cpid[proc_num];
         for (int i = 0; i < proc_num; i++) {
             /* if is disk, choose disk dir, else choose ram dir */
+            char fpath[128];
             char* dir = isdisk ? DSK_DIR : RAM_DIR;
             sprintf(fpath, "%s/%03d%05d%01d%01d%01d%01d", 
                     dir, r, i+1, isdisk, iswrite, isordered, bsize);
             /* make file with given size (because we want to do some lseek tests) */
             make_big(fsize, fpath);
+        }
+        for (int i = 0; i < proc_num; i++) {
             int pid = fork();
             if (pid) {
                 cpid[i] = pid;
