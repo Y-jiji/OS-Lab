@@ -133,14 +133,14 @@ void do_test(
 }
 
 int test_one_rep(
-    volatile int proc_num,  /* number of processes */
-    volatile int isdisk,    /* whether this file is on disk */
-    volatile int iswrite,   /* read test or write test */
-    volatile int isordered, /* ordered test or random test */
-    volatile int bsize      /* block size for each operation */
+    const int proc_num,  /* number of processes */
+    const int isdisk,    /* whether this file is on disk */
+    const int iswrite,   /* read test or write test */
+    const int isordered, /* ordered test or random test */
+    const int bsize      /* block size for each operation */
 ) {
     /* file size attached to each test */
-    int fsize = tot_fsize / proc_num + 1;
+    const int fsize = tot_fsize / proc_num + 1;
     for (int r = 0; r < rep; r++) {
         printf("\n\n");
         printf("test [%-2d] procs [%-2d]\n", r, proc_num);
@@ -156,8 +156,8 @@ int test_one_rep(
         int cpid[proc_num];
         for (int i = 0; i < proc_num; i++) {
             /* if is disk, choose disk dir, else choose ram dir */
-            char fpath[128];
-            char* dir = isdisk ? DSK_DIR : RAM_DIR;
+            const char fpath[128];
+            const char* dir = isdisk ? DSK_DIR : RAM_DIR;
             sprintf(fpath, "%s/%03d%05d%01d%01d%01d%05d",
                     dir, r, i + 1, isdisk, iswrite, isordered, bsize);
             /* make file with given size (because we want to do some lseek tests) */
@@ -179,8 +179,8 @@ int test_one_rep(
         printf("remove test files\n");
         for (int i = 0; i < proc_num; i++) {
             /* if is disk, choose disk dir, else choose ram dir */
-            char fpath[128];
-            char* dir = isdisk ? DSK_DIR : RAM_DIR;
+            const char fpath[128];
+            const char* dir = isdisk ? DSK_DIR : RAM_DIR;
             sprintf(fpath, "%s/%03d%05d%01d%01d%01d%05d",
                     dir, r, i + 1, isdisk, iswrite, isordered, bsize);
             /* remove files (leave space for further use) */
@@ -197,8 +197,8 @@ int main() {
     /* set random seed */
     srand((unsigned)time(NULL));
     /* add heading */
-    int data_fd = open("/dev/tty00", O_WRONLY);
-    char* heading =
+    const int data_fd = open("/dev/tty00", O_WRONLY);
+    const char* heading =
         "repeat_id, "
         "pid, "
         "ram_or_disk, "
