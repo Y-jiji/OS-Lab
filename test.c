@@ -205,8 +205,8 @@ int main() {
     for (int iswrite = 0; iswrite < 2; iswrite++) {
         for (int isdisk = 0; isdisk < 2; isdisk++) {
             for (int isordered = 0; isordered < 2; isordered++) {
-                for (int i = 0; i < sizeof(blksize); i++) {
-                    for (int j = 0; j < sizeof(numproc); j++) {
+                for (int j = 0; j < sizeof(numproc); j++) {
+                    for (int i = 0; i < sizeof(blksize); i++) {
                         test_one_rep(
                             numproc[j],
                             isdisk,
