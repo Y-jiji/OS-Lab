@@ -3,6 +3,8 @@ mknod /dev/myram b 1 13
 ls /dev/ | grep ram
 buildmyram 512 /dev/myram
 mkfs.mfs /dev/myram
+rm -r -f /root/myramtest
+mkdir /root/myramtest
 mount /dev/myram /root/myramtest
 df
 
