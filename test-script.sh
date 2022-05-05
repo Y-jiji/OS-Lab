@@ -5,17 +5,17 @@ echo "finished"
 echo "=== RAM ==="
 mknod /dev/myram b 1 13
 ls /dev/ | grep ram
-buildmyram 450 /dev/myram
+buildmyram 756 /dev/myram
 mkfs.mfs /dev/myram
-rm -r -f /myramtest
-mkdir /myramtest
-mount /dev/myram /myramtest
+rm -r -f /usr/myramtest
+mkdir /usr/myramtest
+mount /dev/myram /usr/myramtest
 df
 echo "finished"
 
 echo "=== Disk ==="
-rm -r -f /mydisktest
-mkdir /mydisktest
+rm -r -f /usr/mydisktest
+mkdir /usr/mydisktest
 echo "finished"
 
 echo "=== Start Test ==="
