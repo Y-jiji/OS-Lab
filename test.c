@@ -4,6 +4,8 @@
 #define KB 1024
 #define MB 1048576
 
+#include <fcntl.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,8 +13,6 @@
 #include <sys/wait.h>
 #include <time.h>
 #include <unistd.h>
-#include <signal.h>
-#include <fcntl.h>
 
 /* blocksize for different tests */
 const int blksize[] = {64, 256, 1 * KB, 4 * KB, 16 * KB, 64 * KB};
@@ -34,7 +34,7 @@ const int tot_fsize = 400 * MB;
 
 /* make a file with given size */
 int make_big(int fsize, char* fpath) {
-    printf("making file [%s]\n", fpath); 
+    printf("making file [%s]\n", fpath);
     char buff[1024];
     for (int i = 0; i < 1024; i++)
         buff[i] = rand() % 10 + '0';
@@ -66,9 +66,6 @@ void do_test(
     char* dir = isdisk ? DSK_DIR : RAM_DIR;
     sprintf(fpath, "%s/%03d%05d%01d%01d%01d%01d",
             dir, test_id, proc_id, isdisk, iswrite, isordered, bsize);
-
-    /* make file with given size (because we want to do some lseek tests) */
-    make_big(fsize, fpath);
 
     /* open file at fpath, mind that we use O_SYNC flag to keep all data flushed to the mem hardware */
     int flag = O_SYNC | (iswrite ? O_WRONLY : O_RDONLY);
@@ -124,8 +121,17 @@ int test_one_rep(
     for (int r = 0; r < rep; r++) {
         int cpid[proc_num];
         for (int i = 0; i < proc_num; i++) {
+            /* if is disk, choose disk dir, else choose ram dir */
+            char* dir = isdisk ? DSK_DIR : RAM_DIR;
+            sprintf(fpath, "%s/%03d%05d%01d%01d%01d%01d", 
+                    dir, r, i+1, isdisk, iswrite, isordered, bsize);
+            /* make file with given size (because we want to do some lseek tests) */
+            make_big(fsize, fpath);
             int pid = fork();
-            if (pid) { cpid[i] = pid; continue; }
+            if (pid) {
+                cpid[i] = pid;
+                continue;
+            }
             do_test(r, i + 1, isdisk, iswrite, isordered, bsize, fsize);
         }
         for (int i = 0; i < proc_num; i++)
