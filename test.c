@@ -96,20 +96,23 @@ void do_test(
         if (~oksize) byte_cnt += oksize;
     }
 
-
-    printf("test [%04d] proc [%04d] alarm rings\n", test_id, proc_id);
+    printf(
+        "test [%04d] proc [%04d] alarm rings\n"
+        "byte cnt [%04d]\n",
+        test_id, proc_id, byte_cnt
+    );
     /* calculate throughput, print data */
     double throughput = (double)(byte_cnt) / (double)(secs);
 
     /* print data to row */
     char row[256];
-    memset(row,0,sizeof(row));
+    memset(row, 0, sizeof(row));
     sprintf(row, "%d, %d, %d, %d, %d, %d, %.4lf\n",
             test_id, proc_id, isdisk, iswrite, isordered, bsize, throughput);
 
     /* open serial device, flush one data row */
-    printf("test [%04d] proc [%04d] printf data to serial\n", 
-            test_id, proc_id);
+    printf("test [%04d] proc [%04d] printf data to serial\n",
+           test_id, proc_id);
     int data_fd = open("/dev/tty00", O_WRONLY);
     write(data_fd, row, strlen(row));
     close(data_fd);
@@ -130,14 +133,14 @@ int test_one_rep(
     for (int r = 0; r < rep; r++) {
         printf("\n\n");
         printf("test [%-2d] procs [%-2d]    \n", r, proc_num);
-        printf("----------------------------------------------\n");
+        printf("--------------------------------------------------\n");
         int cpid[proc_num];
         for (int i = 0; i < proc_num; i++) {
             /* if is disk, choose disk dir, else choose ram dir */
             char fpath[128];
             char* dir = isdisk ? DSK_DIR : RAM_DIR;
-            sprintf(fpath, "%s/%03d%05d%01d%01d%01d%01d", 
-                    dir, r, i+1, isdisk, iswrite, isordered, bsize);
+            sprintf(fpath, "%s/%03d%05d%01d%01d%01d%01d",
+                    dir, r, i + 1, isdisk, iswrite, isordered, bsize);
             /* make file with given size (because we want to do some lseek tests) */
             create_big(fsize, fpath);
         }
