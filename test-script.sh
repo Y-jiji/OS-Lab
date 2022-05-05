@@ -1,7 +1,7 @@
 echo "=== RAM ==="
 mknod /dev/myram b 1 13
 ls /dev/ | grep ram
-buildmyram 510 /dev/myram
+buildmyram 450 /dev/myram
 mkfs.mfs /dev/myram
 rm -r -f /root/myramtest
 mkdir /root/myramtest
