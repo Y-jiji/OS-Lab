@@ -24,7 +24,7 @@ const int numproc[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
 const int rep = 8;
 
 /* each test proc run secs time before termination */
-const int secs = 2;
+const int secs = 7;
 
 /* whether the alarm signal arrived */
 volatile int alarm_sig_arrived = 0;
@@ -103,10 +103,13 @@ void do_test(
             printf("test [%04d] proc [%04d] fail\n", test_id, proc_id);
     }
 
+    /* print message when alarm rings */
     printf(
         "test [%04d] proc [%04d] alarm rings\n"
-        "byte cnt [%04lld]\n",
-        test_id, proc_id, byte_cnt);
+        "byte cnt [%04lld]\n"
+        "io cnt [%04lld]\n",
+        test_id, proc_id, byte_cnt, io_cnt);
+
     /* calculate throughput, print data */
     double throughput = (double)(byte_cnt) / (double)(secs);
     double latency = (double)(secs) / (double)(io_cnt);
@@ -114,7 +117,7 @@ void do_test(
     /* print data to row */
     char row[256];
     memset(row, 0, sizeof(row));
-    sprintf(row, "%d, %d, %d, %d, %d, %d, %.4lf, %.4lf\n",
+    sprintf(row, "%d, %d, %d, %d, %d, %d, %.4lf, %lf\n",
             test_id, proc_id, isdisk, iswrite, isordered, bsize,
             throughput, latency);
 
