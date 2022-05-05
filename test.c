@@ -150,8 +150,7 @@ int test_one_rep(
             isdisk ? "disk" : "ram",
             iswrite ? "write" : "read",
             isordered ? "ordered" : "random",
-            (double)bsize / (double)KB
-        );
+            (double)bsize / (double)KB);
         printf("--------------------------------------------------\n");
         int cpid[proc_num];
         for (int i = 0; i < proc_num; i++) {
@@ -210,11 +209,11 @@ int main() {
     write(data_fd, heading, strlen(heading));
     close(data_fd);
     /* run all the tests */
-    for (int iswrite = 0; iswrite < 2; iswrite++) {
-        for (int i = 0; i < sizeof(blksize); i++) {
-            for (int j = 0; j < sizeof(numproc); j++) {
-                for (int isordered = 0; isordered < 2; isordered++) {
-                    for (int isdisk = 0; isdisk < 2; isdisk++) {
+    for (volatile int iswrite = 0; iswrite < 2; iswrite++) {
+        for (volatile int i = 0; i < sizeof(blksize) / sizeof(int); i++) {
+            for (volatile int j = 0; j < sizeof(numproc) / sizeof(int); j++) {
+                for (volatile int isordered = 0; isordered < 2; isordered++) {
+                    for (volatile int isdisk = 0; isdisk < 2; isdisk++) {
                         if (numproc[j] > 100) {
                             printf("err???????\n");
                             return 0;
