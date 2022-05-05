@@ -1,5 +1,5 @@
-#define RAM_DIR "/root/myramtest"
-#define DSK_DIR "/root/mydisktest"
+#define RAM_DIR "/myramtest"
+#define DSK_DIR "/mydisktest"
 
 #define KB 1024
 #define MB 1048576
