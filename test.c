@@ -34,7 +34,7 @@ void alarm_handler(int sig) { alarm_sig_arrived = 1; }
 const int tot_fsize = 400 * MB;
 
 /* make a file with given size */
-int create_big(const int fsize, const char* fpath) {
+int create_big(const int fsize, const char fpath[]) {
     printf("create & fill file [%s]\n", fpath);
     char buff[128 * KB];
     for (int i = 0; i < 128 * KB; i++)
@@ -156,7 +156,7 @@ int test_one_rep(
         int cpid[proc_num];
         for (int i = 0; i < proc_num; i++) {
             /* if is disk, choose disk dir, else choose ram dir */
-            const char fpath[128];
+            char fpath[128];
             const char* dir = isdisk ? DSK_DIR : RAM_DIR;
             sprintf(fpath, "%s/%03d%05d%01d%01d%01d%05d",
                     dir, r, i + 1, isdisk, iswrite, isordered, bsize);
@@ -179,7 +179,7 @@ int test_one_rep(
         printf("remove test files\n");
         for (int i = 0; i < proc_num; i++) {
             /* if is disk, choose disk dir, else choose ram dir */
-            const char fpath[128];
+            char fpath[128];
             const char* dir = isdisk ? DSK_DIR : RAM_DIR;
             sprintf(fpath, "%s/%03d%05d%01d%01d%01d%05d",
                     dir, r, i + 1, isdisk, iswrite, isordered, bsize);
