@@ -42,7 +42,7 @@ int make_big(int fsize, char* fpath) {
     printf("[");
     for (int i = 0; i < fsize / (128 * KB) + 1; i++) {
         write(fd, buff, 128 * KB);
-        printf("=", fpath);
+        printf("=");
     }
     close(fd);
     printf("]\n");
