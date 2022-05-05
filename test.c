@@ -21,10 +21,10 @@ const int blksize[] = {64, 256, 1 * KB, 4 * KB, 16 * KB, 64 * KB};
 const int numproc[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
 
 /* each test repeat rep times */
-const int rep = 8;
+const int rep = 1;
 
 /* each test proc run secs time before termination */
-const int secs = 8;
+const int secs = 1;
 
 /* whether the alarm signal arrived */
 volatile int alarm_sig_arrived = 0;
