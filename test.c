@@ -160,7 +160,7 @@ int main() {
     srand((unsigned)time(NULL));
     /* add heading */
     int data_fd = open("/dev/tty00", O_WRONLY);
-    char* heading = "repeat_id, pid, ram_or_disk , read_or_write, ordered_or_random, block_size, throughput(per_second)";
+    char* heading = "repeat_id, pid, ram_or_disk , read_or_write, ordered_or_random, block_size, throughput(per_second)\n";
     write(data_fd, heading, strlen(heading) + 1);
     close(data_fd);
     /* run all the tests */
