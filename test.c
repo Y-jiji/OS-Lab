@@ -35,13 +35,17 @@ const int tot_fsize = 400 * MB;
 /* make a file with given size */
 int make_big(int fsize, char* fpath) {
     printf("making file [%s]\n", fpath);
-    char buff[1024];
-    for (int i = 0; i < 1024; i++)
+    char buff[128 * KB];
+    for (int i = 0; i < 128 * KB; i++)
         buff[i] = rand() % 10 + '0';
     int fd = open(fpath, O_CREAT | O_TRUNC | O_WRONLY);
-    for (int i = 0; i < fsize / 1024 + 1; i++)
-        write(fd, buff, 1024);
+    printf("[");
+    for (int i = 0; i < fsize / (128 * KB) + 1; i++) {
+        write(fd, buff, 128 * KB);
+        printf("=", fpath);
+    }
     close(fd);
+    printf("]\n");
     return 0;
 }
 
