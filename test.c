@@ -165,6 +165,7 @@ int test_one_rep(
             sprintf(fpath, "%s/%03d%05d%01d%01d%01d%01d",
                     dir, r, i + 1, isdisk, iswrite, isordered, bsize);
             /* remove files (leave space for further use) */
+            printf("remove [%s]\n", fpath);
             remove(fpath);
         }
         printf("remove file finished\n");
@@ -184,7 +185,7 @@ int main() {
     /* run all the tests */
     for (int isdisk = 0; isdisk < 2; isdisk++) {
         for (int iswrite = 0; iswrite < 2; iswrite++) {
-            for (int isordered = 1; isordered < 2; isordered++) {
+            for (int isordered = 0; isordered < 2; isordered++) {
                 for (int i = 0; i < sizeof(blksize); i++) {
                     for (int j = 0; j < sizeof(numproc); j++) {
                         test_one_rep(
