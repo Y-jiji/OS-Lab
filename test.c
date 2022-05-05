@@ -215,6 +215,10 @@ int main() {
             for (int j = 0; j < sizeof(numproc); j++) {
                 for (int isordered = 0; isordered < 2; isordered++) {
                     for (int isdisk = 0; isdisk < 2; isdisk++) {
+                        if (numproc[j] > 100) {
+                            printf("err???????\n");
+                            return 0;
+                        }
                         test_one_rep(
                             numproc[j],
                             isdisk,
