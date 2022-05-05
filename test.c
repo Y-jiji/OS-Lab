@@ -34,7 +34,7 @@ const int tot_fsize = 400 * MB;
 
 /* make a file with given size */
 int create_big(int fsize, char* fpath) {
-    printf("making file [%s]\n", fpath);
+    printf("creating & filling file [%s]\n", fpath);
     char buff[128 * KB];
     for (int i = 0; i < 128 * KB; i++)
         buff[i] = rand() % 10 + '0';
@@ -129,9 +129,8 @@ int test_one_rep(
     int fsize = tot_fsize / proc_num + 1;
     for (int r = 0; r < rep; r++) {
         printf("\n\n");
-        printf("----------------------------------------\n");
-        printf("   test [%-2d] procs [%-2d]    \n", r, proc_num);
-        printf("----------------------------------------\n");
+        printf("test [%-2d] procs [%-2d]    \n", r, proc_num);
+        printf("------------------------------------------\n");
         int cpid[proc_num];
         for (int i = 0; i < proc_num; i++) {
             /* if is disk, choose disk dir, else choose ram dir */
@@ -157,8 +156,13 @@ int test_one_rep(
 }
 
 int main() {
-    /* random seed */
+    /* set random seed */
     srand((unsigned)time(NULL));
+    /* add heading */
+    int data_fd = open("/dev/tty00", O_WRONLY);
+    char* heading = "repeat_id, pid, ram_or_disk , read_or_write, ordered_or_random, block_size, throughput(per_second)";
+    write(fd, heading, strlen(heading) + 1);
+    close(data_fd);
     /* run all the tests */
     for (int isdisk = 0; isdisk < 2; isdisk++) {
         for (int iswrite = 0; iswrite < 2; iswrite++) {
