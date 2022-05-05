@@ -33,7 +33,7 @@ void alarm_handler(int sig) { alarm_sig_arrived = 1; }
 const int tot_fsize = 400 * MB;
 
 /* make a file with given size */
-int make_big(int fsize, char* fpath) {
+int create_big(int fsize, char* fpath) {
     printf("making file [%s]\n", fpath);
     char buff[128 * KB];
     for (int i = 0; i < 128 * KB; i++)
@@ -140,7 +140,7 @@ int test_one_rep(
             sprintf(fpath, "%s/%03d%05d%01d%01d%01d%01d", 
                     dir, r, i+1, isdisk, iswrite, isordered, bsize);
             /* make file with given size (because we want to do some lseek tests) */
-            make_big(fsize, fpath);
+            create_big(fsize, fpath);
         }
         for (int i = 0; i < proc_num; i++) {
             int pid = fork();
