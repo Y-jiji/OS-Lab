@@ -157,12 +157,12 @@ int test_one_rep(
         }
         for (int i = 0; i < proc_num; i++) {
             int pid = fork();
-            if (pid) {
+            if (pid != 0) {
                 cpid[i] = pid;
-                continue;
+            } else {
+                do_test(r, i + 1, isdisk, iswrite, isordered, bsize, fsize);
+                return 0;
             }
-            do_test(r, i + 1, isdisk, iswrite, isordered, bsize, fsize);
-            return 0;
         }
         for (int i = 0; i < proc_num; i++)
             waitpid(cpid[i], NULL, 0);
@@ -203,10 +203,10 @@ int main() {
     close(data_fd);
     /* run all the tests */
     for (int iswrite = 0; iswrite < 2; iswrite++) {
-        for (int isdisk = 0; isdisk < 2; isdisk++) {
-            for (int isordered = 0; isordered < 2; isordered++) {
-                for (int j = 0; j < sizeof(numproc); j++) {
-                    for (int i = 0; i < sizeof(blksize); i++) {
+        for (int i = 0; i < sizeof(blksize); i++) {
+            for (int j = 0; j < sizeof(numproc); j++) {
+                for (int isordered = 0; isordered < 2; isordered++) {
+                    for (int isdisk = 0; isdisk < 2; isdisk++) {
                         test_one_rep(
                             numproc[j],
                             isdisk,
