@@ -161,7 +161,7 @@ int main() {
     /* add heading */
     int data_fd = open("/dev/tty00", O_WRONLY);
     char* heading = "repeat_id, pid, ram_or_disk , read_or_write, ordered_or_random, block_size, throughput(per_second)";
-    write(fd, heading, strlen(heading) + 1);
+    write(data_fd, heading, strlen(heading) + 1);
     close(data_fd);
     /* run all the tests */
     for (int isdisk = 0; isdisk < 2; isdisk++) {
