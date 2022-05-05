@@ -23,7 +23,7 @@ const int numproc[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
 /* each test repeat rep times */
 const int rep = 16;
 /* each test proc run secs time before termination */
-const int secs = 15;
+const int secs = 2;
 
 /* whether the alarm signal arrived */
 volatile int alarm_sig_arrived = 0;
@@ -155,6 +155,20 @@ int test_one_rep(
         }
         for (int i = 0; i < proc_num; i++)
             waitpid(cpid[i], NULL, 0);
+        printf("all tests finished\n");
+        printf("--------------------------------------------------\n");
+        printf("remove test files\n");
+        for (int i = 0; i < proc_num; i++) {
+            /* if is disk, choose disk dir, else choose ram dir */
+            char fpath[128];
+            char* dir = isdisk ? DSK_DIR : RAM_DIR;
+            sprintf(fpath, "%s/%03d%05d%01d%01d%01d%01d",
+                    dir, r, i + 1, isdisk, iswrite, isordered, bsize);
+            /* remove files (leave space for further use) */
+            remove(fpath);
+        }
+        printf("remove file finished\n");
+        printf("--------------------------------------------------\n");
     }
     return 0;
 }
