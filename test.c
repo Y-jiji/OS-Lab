@@ -170,7 +170,7 @@ int main() {
     /* run all the tests */
     for (int isdisk = 0; isdisk < 2; isdisk++) {
         for (int iswrite = 0; iswrite < 2; iswrite++) {
-            for (int isordered = 0; isordered < 2; isordered++) {
+            for (int isordered = 1; isordered < 2; isordered++) {
                 for (int i = 0; i < sizeof(blksize); i++) {
                     for (int j = 0; j < sizeof(numproc); j++) {
                         test_one_rep(
