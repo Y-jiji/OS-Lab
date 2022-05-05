@@ -94,6 +94,7 @@ void do_test(
             oksize = read(fd, buf, bsize);
         }
         if (~oksize) byte_cnt += oksize;
+        else printf("test [%04d] proc [%04d] fail\n", test_id, proc_id);
     }
 
     printf(
