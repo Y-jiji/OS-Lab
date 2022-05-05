@@ -146,7 +146,7 @@ int test_one_rep(
         printf("test [%-2d] procs [%-2d]\n", r, proc_num);
         printf(
             "device [%s]"
-            " [%s] [%s] [%s] [%d KB]",
+            " [%s] [%s] [%d KB]",
             isdisk ? "disk" : "ram",
             iswrite ? "write" : "read",
             isordered ? "ordered" : "random",
