@@ -21,7 +21,7 @@ const int blksize[] = {64, 256, 1 * KB, 4 * KB, 16 * KB, 64 * KB};
 const int numproc[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
 
 /* each test repeat rep times */
-const int rep = 128;
+const int rep = 16;
 /* each test proc run secs time before termination */
 const int secs = 15;
 
@@ -59,7 +59,7 @@ void do_test(
     int bsize,     /* block size for each operation */
     int fsize      /* file size for this test (adds up to tot_fsize) */
 ) {
-    printf("test [%04d] proc [%04d]\n", test_id, proc_id);
+    printf("test [%04d] proc [%04d] start\n", test_id, proc_id);
     /* we set alarm_sig_arrived to 0 initially */
     alarm_sig_arrived = 0;
 
