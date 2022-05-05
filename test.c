@@ -59,7 +59,7 @@ void do_test(
     int bsize,     /* block size for each operation */
     int fsize      /* file size for this test (adds up to tot_fsize) */
 ) {
-    printf("test [%04d] proc_id[%04d]\n", test_id, proc_id);
+    printf("test [%04d] proc[%04d]\n", test_id, proc_id);
     /* we set alarm_sig_arrived to 0 initially */
     alarm_sig_arrived = 0;
 
@@ -81,7 +81,7 @@ void do_test(
     long long byte_cnt = 0;
 
     /* set signal handler */
-    printf("test [%04d] proc_id[%04d] set sig alarm\n", test_id, proc_id);
+    printf("test [%04d] proc[%04d] set sig alarm\n", test_id, proc_id);
     signal(SIGALRM, alarm_handler);
     /* set alarm secs later */
     alarm(secs);
@@ -100,7 +100,7 @@ void do_test(
     }
 
 
-    printf("test [%04d] proc_id[%04d] alarm rings\n", test_id, proc_id);
+    printf("test [%04d] proc[%04d] alarm rings\n", test_id, proc_id);
     /* calculate throughput, print data */
     double throughput = (double)(byte_cnt) / (double)(secs);
 
@@ -111,10 +111,10 @@ void do_test(
             test_id, proc_id, isdisk, iswrite, isordered, bsize, throughput);
 
     /* open serial device, flush one data row */
-    printf("test [%04d] proc_id[%04d] printf data to serial\n", 
+    printf("test [%04d] proc[%04d] printf data to serial\n", 
             test_id, proc_id);
     int data_fd = open("/dev/tty00", O_WRONLY);
-    write(data_fd, row, 256);
+    write(data_fd, row, strlen(row) + 1);
     close(data_fd);
 
     /* exit this proc */
