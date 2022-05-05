@@ -34,7 +34,7 @@ void alarm_handler(int sig) { alarm_sig_arrived = 1; }
 const int tot_fsize = 400 * MB;
 
 /* make a file with given size */
-int create_big(int fsize, char* fpath) {
+int create_big(const int fsize, const char* fpath) {
     printf("create & fill file [%s]\n", fpath);
     char buff[128 * KB];
     for (int i = 0; i < 128 * KB; i++)
