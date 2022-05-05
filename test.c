@@ -21,7 +21,7 @@ const int blksize[] = {64, 256, 1 * KB, 4 * KB, 16 * KB, 64 * KB};
 const int numproc[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
 
 /* each test repeat rep times */
-const int rep = 16;
+const int rep = 8;
 
 /* each test proc run secs time before termination */
 const int secs = 2;
@@ -97,15 +97,16 @@ void do_test(
         } else {
             oksize = read(fd, buf, bsize);
         }
-        if (~oksize) byte_cnt += oksize, ++io_cnt;
-        else printf("test [%04d] proc [%04d] fail\n", test_id, proc_id);
+        if (~oksize)
+            byte_cnt += oksize, ++io_cnt;
+        else
+            printf("test [%04d] proc [%04d] fail\n", test_id, proc_id);
     }
 
     printf(
         "test [%04d] proc [%04d] alarm rings\n"
         "byte cnt [%04lld]\n",
-        test_id, proc_id, byte_cnt
-    );
+        test_id, proc_id, byte_cnt);
     /* calculate throughput, print data */
     double throughput = (double)(byte_cnt) / (double)(secs);
     double latency = (double)(secs) / (double)(io_cnt);
@@ -114,7 +115,7 @@ void do_test(
     char row[256];
     memset(row, 0, sizeof(row));
     sprintf(row, "%d, %d, %d, %d, %d, %d, %.4lf, %.4lf\n",
-            test_id, proc_id, isdisk, iswrite, isordered, bsize, 
+            test_id, proc_id, isdisk, iswrite, isordered, bsize,
             throughput, latency);
 
     /* open serial device, flush one data row */
@@ -189,8 +190,8 @@ int main() {
     write(data_fd, heading, strlen(heading));
     close(data_fd);
     /* run all the tests */
-    for (int isdisk = 0; isdisk < 2; isdisk++) {
-        for (int iswrite = 0; iswrite < 2; iswrite++) {
+    for (int iswrite = 0; iswrite < 2; iswrite++) {
+        for (int isdisk = 0; isdisk < 2; isdisk++) {
             for (int isordered = 0; isordered < 2; isordered++) {
                 for (int i = 0; i < sizeof(blksize); i++) {
                     for (int j = 0; j < sizeof(numproc); j++) {
