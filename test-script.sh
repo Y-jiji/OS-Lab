@@ -1,3 +1,7 @@
+echo "=== Compile [test.c] ==="
+clang -o test test.c # compile
+echo "finished"
+
 echo "=== RAM ==="
 mknod /dev/myram b 1 13
 ls /dev/ | grep ram
@@ -7,19 +11,16 @@ rm -r -f /root/myramtest
 mkdir /root/myramtest
 mount /dev/myram /root/myramtest
 df
+echo "finished"
 
 echo "=== Disk ==="
 rm -r -f /root/mydisktest
 mkdir /root/mydisktest
+echo "finished"
 
 echo "=== Start Test ==="
-clang -o test test.c # compile
 ./test               # run
 
 echo "==========================="
 echo "========== done ==========="
 echo "==========================="
-
-
-
-
