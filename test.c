@@ -99,7 +99,7 @@ void do_test(
 
     printf(
         "test [%04d] proc [%04d] alarm rings\n"
-        "byte cnt [%04d]\n",
+        "byte cnt [%04ld]\n",
         test_id, proc_id, byte_cnt
     );
     /* calculate throughput, print data */
