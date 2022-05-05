@@ -12,6 +12,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <signal.h>
+#include <fcntl.h>
 
 /* blocksize for different tests */
 const int blksize[] = {64, 256, 1 * KB, 4 * KB, 16 * KB, 64 * KB};
@@ -33,6 +34,7 @@ const int tot_fsize = 400 * MB;
 
 /* make a file with given size */
 int make_big(int fsize, char* fpath) {
+    printf("making file [%s]\n", fpath); 
     char buff[1024];
     for (int i = 0; i < 1024; i++)
         buff[i] = rand() % 10 + '0';
@@ -43,7 +45,7 @@ int make_big(int fsize, char* fpath) {
     return 0;
 }
 
-int do_test(
+void do_test(
     int test_id,   /* test id */
     int proc_id,   /* process id */
     int isdisk,    /* whether this file is on disk */
@@ -99,7 +101,7 @@ int do_test(
     /* print data to row */
     char row[1024];
     sprintf(row, "%d, %d, %d, %d, %d, %d, %.4lf\r\n",
-            test_id, proc_id, isdisk, iswrite, isordered, bsize);
+            test_id, proc_id, isdisk, iswrite, isordered, bsize, throughput);
 
     /* open serial device, flush one data row */
     int data_fd = open("/dev/tty00", O_WRONLY);
@@ -115,7 +117,7 @@ int test_one_rep(
     int isdisk,    /* whether this file is on disk */
     int iswrite,   /* read test or write test */
     int isordered, /* ordered test or random test */
-    int bsize,     /* block size for each operation */
+    int bsize      /* block size for each operation */
 ) {
     /* file size attached to each test */
     int fsize = tot_fsize / proc_num + 1;
@@ -127,8 +129,9 @@ int test_one_rep(
             do_test(r, i + 1, isdisk, iswrite, isordered, bsize, fsize);
         }
         for (int i = 0; i < proc_num; i++)
-            waitpid(cpid[i], &NULL, WIFEXITED);
+            waitpid(cpid[i], NULL, 0);
     }
+    return 0;
 }
 
 int main() {
@@ -151,4 +154,5 @@ int main() {
             }
         }
     }
+    return 0;
 }
