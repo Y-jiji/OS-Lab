@@ -56,7 +56,7 @@ void do_test(
     int isordered, /* ordered test or random test */
     int bsize,     /* block size for each operation */
     int fsize,      /* file size for this test (adds up to tot_fsize) */
-    int proc_n,     /* number of processes */
+    int proc_n     /* number of processes */
 ) {
     printf("test [%04d] proc [%04d] start\n", test_id, proc_id);
     /* we set alarm_sig_arrived to 0 initially */
