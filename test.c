@@ -55,7 +55,8 @@ void do_test(
     int iswrite,   /* read test or write test */
     int isordered, /* ordered test or random test */
     int bsize,     /* block size for each operation */
-    int fsize      /* file size for this test (adds up to tot_fsize) */
+    int fsize,      /* file size for this test (adds up to tot_fsize) */
+    int proc_n,     /* number of processes */
 ) {
     printf("test [%04d] proc [%04d] start\n", test_id, proc_id);
     /* we set alarm_sig_arrived to 0 initially */
@@ -117,9 +118,9 @@ void do_test(
     /* print data to row */
     char row[256];
     memset(row, 0, sizeof(row));
-    sprintf(row, "%d, %d, %d, %d, %d, %d, %.4lf, %.10lf\n",
+    sprintf(row, "%d, %d, %d, %d, %d, %d, %.4lf, %.10lf, %d\n",
             test_id, proc_id, isdisk, iswrite, isordered, bsize,
-            throughput, latency);
+            throughput, latency, proc_n);
 
     /* open serial device, flush one data row */
     printf("test [%04d] proc [%04d] printf data to serial\n",
@@ -167,7 +168,7 @@ int test_one_rep(
             if (pid != 0) {
                 cpid[i] = pid;
             } else {
-                do_test(r, i + 1, isdisk, iswrite, isordered, bsize, fsize);
+                do_test(r, i + 1, isdisk, iswrite, isordered, bsize, fsize, proc_num);
                 return 0;
             }
         }
@@ -205,7 +206,8 @@ int main() {
         "ordered_or_random, "
         "block_size, "
         "throughput(per_second), "
-        "latency(second_per_io)\n";
+        "latency(second_per_io), "
+        "proc_n\n";
     write(data_fd, heading, strlen(heading));
     close(data_fd);
     /* run all the tests */
