@@ -92,6 +92,7 @@ void do_test(
     /* run until alarm rings */
     while (!alarm_sig_arrived) {
         long long oksize = 0;
+        printf("%d\n", ALIGN(bsize));
         if (!isordered)
             lseek(fd, ALIGN((rand() % fsize) - bsize), 0);
         if (iswrite) {
