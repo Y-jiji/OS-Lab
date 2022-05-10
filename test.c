@@ -4,7 +4,7 @@
 #define KB 1024
 #define MB 1048576
 #define ALIGNSZ 512
-#define ALIGN(X) ((((X) + 1) / ALIGNSZ) * ALIGNSZ)
+#define ALIGN(X) (((X + ALIGNSZ - 1) / ALIGNSZ) * ALIGNSZ)
 
 #include <fcntl.h>
 #include <signal.h>
