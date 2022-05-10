@@ -3,6 +3,8 @@
 
 #define KB 1024
 #define MB 1048576
+#define ALIGNSZ 512
+#define ALIGN(X) ((((X) + 512) / 512) * 512)
 
 #include <fcntl.h>
 #include <signal.h>
@@ -41,9 +43,8 @@ int create_big(const int fsize, const char fpath[]) {
         buff[i] = rand() % 10 + '0';
     int fd = open(fpath, O_CREAT | O_TRUNC | O_WRONLY);
     int step = (fsize / (128 * KB) + 1) / 64;
-    for (int i = 0; i < fsize / (128 * KB) + 1; i++) {
+    for (int i = 0; i < fsize / (128 * KB) + 1; i++)
         write(fd, buff, 128 * KB);
-    }
     close(fd);
     return 0;
 }
@@ -55,7 +56,7 @@ void do_test(
     int iswrite,   /* read test or write test */
     int isordered, /* ordered test or random test */
     int bsize,     /* block size for each operation */
-    int fsize,      /* file size for this test (adds up to tot_fsize) */
+    int fsize,     /* file size for this test (adds up to tot_fsize) */
     int proc_n     /* number of processes */
 ) {
     printf("test [%04d] proc [%04d] start\n", test_id, proc_id);
@@ -72,8 +73,8 @@ void do_test(
     sprintf(fpath, "%s/%03d%05d%01d%01d%01d%05d",
             dir, test_id, proc_id, isdisk, iswrite, isordered, bsize);
 
-    /* open file at fpath, mind that we use O_SYNC flag to keep all data flushed to the mem hardware */
-    int flag = O_SYNC | (iswrite ? O_WRONLY : O_RDONLY);
+    /* open file at fpath, mind that we use O_DIRECT flag to keep all data flushed to the mem hardware */
+    int flag = O_DIRECT | (iswrite ? O_WRONLY : O_RDONLY);
     int fd = open(fpath, flag);
 
     /* byte count, initially 0 */
@@ -98,10 +99,12 @@ void do_test(
         } else {
             oksize = read(fd, buf, bsize);
         }
-        if (~oksize)
+        if (~oksize) {
             byte_cnt += oksize, ++io_cnt;
-        else
+            if (oksize == 0) lseek(fd, 0, 0);
+        } else {
             printf("test [%04d] proc [%04d] fail\n", test_id, proc_id);
+        }
     }
 
     /* print message when alarm rings */
@@ -168,7 +171,7 @@ int test_one_rep(
             if (pid != 0) {
                 cpid[i] = pid;
             } else {
-                do_test(r, i + 1, isdisk, iswrite, isordered, bsize, fsize, proc_num);
+                do_test(r, i + 1, isdisk, iswrite, isordered, ALIGN(bsize), fsize, proc_num);
                 return 0;
             }
         }
