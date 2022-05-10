@@ -3,7 +3,7 @@
 
 #define KB 1024
 #define MB 1048576
-#define ALIGNSZ 512
+#define ALIGNSZ 16
 #define ALIGN(X) (((X + ALIGNSZ - 1) / ALIGNSZ) * ALIGNSZ)
 
 #include <fcntl.h>
@@ -64,7 +64,7 @@ void do_test(
     alarm_sig_arrived = 0;
 
     /* buffer, file name */
-    char buf[ALIGN(bsize)], fpath[128];
+    char buf[ALIGN(bsize)+1], fpath[128];
     for (int i = 0; i < ALIGN(bsize); i++)
         buf[i] = rand() % 10 + '0';
 
@@ -76,6 +76,8 @@ void do_test(
     /* open file at fpath, mind that we use O_DIRECT flag to keep all data flushed to the mem hardware */
     int flag = O_DIRECT | (iswrite ? O_WRONLY : O_RDONLY);
     int fd = open(fpath, flag);
+
+    printf("test [%04d] proc [%04d] file open at [%d]\n", test_id, proc_id, fd);
 
     /* byte count, initially 0 */
     long long byte_cnt = 0;
@@ -92,13 +94,12 @@ void do_test(
     /* run until alarm rings */
     while (!alarm_sig_arrived) {
         long long oksize = 0;
-        printf("%d\n", ALIGN(bsize));
         if (!isordered)
             lseek(fd, ALIGN((rand() % fsize) - bsize), 0);
         if (iswrite) {
-            oksize = write(fd, buf, bsize);
+            oksize = write(fd, buf, ALIGN(bsize));
         } else {
-            oksize = read(fd, buf, bsize);
+            oksize = read(fd, buf, ALIGN(bsize));
         }
         if (~oksize) {
             byte_cnt += oksize, ++io_cnt;
