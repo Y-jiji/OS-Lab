@@ -4,7 +4,7 @@
 #define KB 1024
 #define MB 1048576
 #define ALIGNSZ 512
-#define ALIGN(X) ((((X) + ALIGNSZ) / ALIGNSZ) * ALIGNSZ)
+#define ALIGN(X) ((((X) + 1) / ALIGNSZ) * ALIGNSZ)
 
 #include <fcntl.h>
 #include <signal.h>
@@ -64,8 +64,8 @@ void do_test(
     alarm_sig_arrived = 0;
 
     /* buffer, file name */
-    char buf[bsize + 16], fpath[128];
-    for (int i = 0; i < bsize + 16; i++)
+    char buf[ALIGN(bsize)], fpath[128];
+    for (int i = 0; i < ALIGN(bsize); i++)
         buf[i] = rand() % 10 + '0';
 
     /* if is disk, choose disk dir, else choose ram dir */
