@@ -4,7 +4,7 @@
 #define KB 1024
 #define MB 1048576
 #define ALIGNSZ 512
-#define ALIGN(X) ((((X) + 512) / 512) * 512)
+#define ALIGN(X) ((((X) + ALIGNSZ) / ALIGNSZ) * ALIGNSZ)
 
 #include <fcntl.h>
 #include <signal.h>
@@ -93,7 +93,7 @@ void do_test(
     while (!alarm_sig_arrived) {
         long long oksize = 0;
         if (!isordered)
-            lseek(fd, (rand() % fsize) - bsize, 0);
+            lseek(fd, ALIGN((rand() % fsize) - bsize), 0);
         if (iswrite) {
             oksize = write(fd, buf, bsize);
         } else {
