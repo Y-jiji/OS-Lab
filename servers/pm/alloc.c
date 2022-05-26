@@ -76,7 +76,7 @@ phys_clicks clicks;		/* amount of memory requested */
     prev_ptr_final = prev_ptr = NIL_HOLE;
 	hp_final = hp = hole_head;
 	while (hp != NIL_HOLE && hp->h_base < swap_base) {
-        // printf("hp->h_len=%d; clicks=%d\n; ", hp->h_len, clicks);
+        /* printf("hp->h_len=%d; clicks=%d\n; ", hp->h_len, clicks); */
         if (hp->h_len >= clicks && 
            (hp_final->h_len > hp->h_len || 
             hp_final->h_len < clicks)
@@ -88,9 +88,9 @@ phys_clicks clicks;		/* amount of memory requested */
 		prev_ptr = hp;
 		hp = hp->h_next;
 	}
-    // printf("hp_final->hp_len=%d\n", hp_final->h_len);
+    /* printf("hp_final->hp_len=%d\n", hp_final->h_len); */
     if (hp_final->h_len >= clicks) {
-        // printf("OK, a good hole\n");
+        /* printf("OK, a good hole\n"); */
         /* We found a hole that is big enough.  Use it. */
         old_base = hp_final->h_base;	/* remember where it started */
         hp_final->h_base += clicks;	/* bite a piece off */
