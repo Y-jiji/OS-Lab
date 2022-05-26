@@ -65,7 +65,7 @@ register struct mproc *rmp;
 {
   /* ONLY move to new mem, do nothing else, thus mem_len stay unchanged */
   phys_clicks old_size, new_size;
-  phys_clicks new_base;
+  phys_clicks old_base, new_base;
   int s;
 
   /* old_size: size of S+D+Gap */
@@ -94,15 +94,16 @@ register struct mproc *rmp;
   );
   if (s < 0) panic(__FILE__,"move_to_new_mem: can't copy stack", s);
 
-  /* Free memory */
-  printf("Free old memory\n");
-  free_mem(rmp->mp_seg[D].mem_phys, old_size);
-
   /* Notify kernel new memory map is set */
   printf("Notify kernel for new memory map\n");
+  old_base = rmp->mp_seg[D].mem_phys;
   rmp->mp_seg[D].mem_phys = new_base;
   rmp->mp_seg[S].mem_phys = new_base + new_size - rmp->mp_seg[S].mem_len;
   sys_newmap(rmp->mp_endpoint, rmp->mp_seg);
+
+  /* Free memory */
+  printf("Free old memory\n");
+  free_mem(old_base, old_size);
 
   return (OK);
 }
