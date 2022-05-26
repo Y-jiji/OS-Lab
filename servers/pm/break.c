@@ -152,6 +152,7 @@ vir_bytes sp;			/* new value of sp */
   }
 
   /* Update data length (but not data orgin) on behalf of brk() system call. */
+  printf("Update data length (but not data orgin)\n");
   old_clicks = mem_dp->mem_len;
   if (data_clicks != mem_dp->mem_len) {
 	mem_dp->mem_len = data_clicks;
@@ -159,6 +160,7 @@ vir_bytes sp;			/* new value of sp */
   }
 
   /* Update stack length and origin due to change in stack pointer. */
+  printf("Update stack length and origin\n");
   if (delta > 0) {
 	mem_sp->mem_vir -= delta;
 	mem_sp->mem_phys -= delta;
@@ -167,6 +169,7 @@ vir_bytes sp;			/* new value of sp */
   }
 
   /* Do the new data and stack segment sizes fit in the address space? */
+  printf("Do the new data and stack segment sizes fit in the address space?\n");
   ft = (rmp->mp_flags & SEPARATE);
 #if (CHIP == INTEL && _WORD_SIZE == 2)
   r = size_ok(ft, rmp->mp_seg[T].mem_len, rmp->mp_seg[D].mem_len, 
@@ -183,6 +186,7 @@ vir_bytes sp;			/* new value of sp */
   }
 
   /* New sizes don't fit or require too many page/segment registers. Restore.*/
+  printf("Call brk failed, restore\n");
   if (changed & DATA_CHANGED) mem_dp->mem_len = old_clicks;
   if (changed & STACK_CHANGED) {
 	mem_sp->mem_vir += delta;
