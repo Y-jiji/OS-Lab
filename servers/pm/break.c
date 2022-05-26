@@ -57,20 +57,20 @@ PUBLIC int do_brk()
 }
 
 PRIVATE int move_to_new_mem(rmp)
-register struct mproc *rmp
+register struct mproc *rmp;
 {
-    int proc_nr_e, s;
-    phys_clicks prog_clicks, new_base;
-    phys_bytes current_data_abs, new_data_abs, data_bytes;
-    phys_bytes current_stack_abs, new_stack_abs, stack_bytes;
+    int proc_nr_e,s;
+    phys_clicks prog_clicks,new_base;
+    phys_bytes current_data_abs,new_data_abs,data_bytes;
+    phys_bytes current_stack_abs,new_stack_abs,stack_bytes;
 
   /* Tell the kernel the process is no longer runnable to prevent it from 
-   * being scheduled in between the following steps. 
+   * being scheduled in between the following steps.
    */
     printf("dequeue runnable\n");
     proc_nr_e = rmp->mp_endpoint;
     sys_nice(proc_nr_e, PRIO_STOP);
-    if(proc_nr_e != FS_PROC_NR)		/* if it is not FS that is exiting.. */
+    if(proc_nr_e != FS_PROC_NR)		/* if it is not FS that is exiting. */
       tell_fs(EXIT, proc_nr_e, 0, 0);  	/* tell FS to free the slot */
     else
       printf("PM: FS died\n");
