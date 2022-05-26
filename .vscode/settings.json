@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "param.h": "c",
+        "mproc.h": "c",
+        "*.dat": "c"
+    }
+}

@@ -56,6 +56,71 @@ PUBLIC int do_brk()
   return(r);			/* return new address or -1 */
 }
 
+PRIVATE int move_to_new_mem(rmp)
+register struct mproc *rmp
+{
+    int proc_nr_e, s;
+    phys_clicks prog_clicks, new_base;
+    phys_bytes current_data_abs, new_data_abs, data_bytes;
+    phys_bytes current_stack_abs, new_stack_abs, stack_bytes;
+
+  /* Tell the kernel the process is no longer runnable to prevent it from 
+   * being scheduled in between the following steps. 
+   */
+    printf("dequeue runnable\n");
+    proc_nr_e = rmp->mp_endpoint;
+    sys_nice(proc_nr_e, PRIO_STOP);
+    if(proc_nr_e != FS_PROC_NR)		/* if it is not FS that is exiting.. */
+      tell_fs(EXIT, proc_nr_e, 0, 0);  	/* tell FS to free the slot */
+    else
+      printf("PM: FS died\n");
+
+  /* Determine how much memory to allocate.  Only the data and stack need to
+   * be copied, because the text segment is either shared or of zero length.
+   */
+    current_data_abs = rmp->mp_seg[D].mem_phys << CLICK_SHIFT;
+    data_bytes = rmp->mp_seg[D].mem_len << CLICK_SHIFT;
+    current_stack_abs = rmp->mp_seg[S].mem_phys << CLICK_SHIFT;
+    stack_bytes = rmp->mp_seg[S].mem_len << CLICK_SHIFT;
+    printf("current [data:%d-%d][---][stack:%d-%d]", 
+        current_data_abs, current_data_abs + data_bytes,
+        current_stack_abs, current_stack_abs + stack_bytes
+    );
+    prog_clicks = (phys_clicks) rmp->mp_seg[S].mem_len;
+    prog_clicks += (rmp->mp_seg[S].mem_vir - rmp->mp_seg[D].mem_vir);
+    
+    /* Allocate new memory (*2) */
+    if ( (new_base = alloc_mem(prog_clicks << 1)) == NO_MEM) return(ENOMEM);
+    new_data_abs = new_base << CLICK_SHIFT;
+    new_stack_abs = (
+        (new_base << CLICK_SHIFT) + 
+        (prog_clicks << (CLICK_SHIFT + 1)) - 
+        stack_bytes
+    );
+    printf("new [data:%d-%d][---][stack:%d-%d]", 
+        new_data_abs, new_data_abs + data_bytes,
+        new_stack_abs, new_stack_abs + stack_bytes
+    );
+    
+    /* Copy core image into allocated space */
+    sys_abscopy(current_data_abs, new_data_abs, data_bytes);
+    sys_abscopy(current_stack_abs, new_current_abs, stack_bytes);
+
+    /* Free the data and stack segments (unit: clicks) */
+    free_mem(current_data_abs, prog_clicks);
+    rmp->mp_seg[D].mem_phys = new_base;
+    rmp->mp_seg[S].mem_phys = new_stack_abs >> CLICK_SHIFT;
+    rmp->mp_seg[S].mem_vir = rmp->mp_seg[D].mem_vir + 
+        (rmp->mp_seg[S].mem_phys - rmp->mp_seg[D].mem_phys);
+    sys_newmap(rmp->mp_endpoint, rmp->mp_seg);
+
+    /* Restore caller's priority */
+    printf("enqueue runnable\n");
+    sys_nice(proc_nr_e, PRIO_USER);
+
+    return (OK);
+}
+
 /*===========================================================================*
  *				adjust  				     *
  *===========================================================================*/
@@ -94,7 +159,10 @@ vir_bytes sp;			/* new value of sp */
 #define SAFETY_BYTES  (384 * sizeof(char *))
 #define SAFETY_CLICKS ((SAFETY_BYTES + CLICK_SIZE - 1) / CLICK_SIZE)
   gap_base = mem_dp->mem_vir + data_clicks + SAFETY_CLICKS;
-  if (lower < gap_base) return(ENOMEM);	/* data and stack collided */
+  if (lower < gap_base) {
+    /* data and stack collided, move to new mem */
+    return move_to_new_mem(rmp);
+  }
 
   /* Update data length (but not data orgin) on behalf of brk() system call. */
   old_clicks = mem_dp->mem_len;
