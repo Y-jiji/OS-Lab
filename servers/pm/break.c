@@ -73,9 +73,11 @@ register struct mproc *rmp;
   new_size = old_size << 1;
 
   /* Allocate new memory */
+  printf("Allocate new memory\n");
   if ((new_base = alloc_mem(new_size)) == NO_MEM) return (ENOMEM);
 
   /* Copy data segement to new mem */
+  printf("Copy data segement to new mem\n");
   s = sys_abscopy(
     (phys_bytes) (rmp->mp_seg[D].mem_phys << CLICK_SHIFT), 
     (phys_bytes) ((new_base + 0) << CLICK_SHIFT), 
@@ -84,6 +86,7 @@ register struct mproc *rmp;
   if (s < 0) panic(__FILE__,"move_to_new_mem: can't copy data", s);
 
   /* Copy stack segement to new mem */
+  printf("Copy stack segement to new mem\n");
   s = sys_abscopy(
     (phys_bytes) (rmp->mp_seg[S].mem_phys << CLICK_SHIFT), 
     (phys_bytes) ((new_base + new_size - rmp->mp_seg[S].mem_len) << CLICK_SHIFT), 
@@ -92,9 +95,11 @@ register struct mproc *rmp;
   if (s < 0) panic(__FILE__,"move_to_new_mem: can't copy stack", s);
 
   /* Free memory */
+  printf("Free old memory\n");
   free_mem(rmp->mp_seg[D].mem_phys, old_size);
 
-  /* Notify kernel new memory segment is set */
+  /* Notify kernel new memory map is set */
+  printf("Notify kernel for new memory map\n");
   rmp->mp_seg[D].mem_phys = new_base;
   rmp->mp_seg[S].mem_phys = new_base + new_size - rmp->mp_seg[S].mem_len;
   sys_newmap(rmp->mp_endpoint, rmp->mp_seg);
