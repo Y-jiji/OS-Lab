@@ -66,6 +66,7 @@ register struct mproc *rmp;
   /* ONLY move to new mem, do nothing else, thus mem_len stay unchanged */
   phys_clicks old_size, new_size;
   phys_clicks old_base, new_base;
+  phys_clicks old_rest_base, new_rest_base, rest_size;
   int s;
 
   /* old_size: size of S+D+Gap */
@@ -73,36 +74,34 @@ register struct mproc *rmp;
   new_size = old_size << 1;
 
   /* Allocate new memory */
-  printf("Allocate new memory\n");
   if ((new_base = alloc_mem(new_size)) == NO_MEM) return (ENOMEM);
 
   /* Copy data segement to new mem */
-  printf("Copy data segement to new mem\n");
   s = sys_abscopy(
     (phys_bytes) (rmp->mp_seg[D].mem_phys << CLICK_SHIFT), 
     (phys_bytes) ((new_base + 0) << CLICK_SHIFT), 
-    (phys_bytes) (rmp->mp_seg[D].mem_len << CLICK_SHIFT)
+    (phys_bytes) (old_size << CLICK_SHIFT)
   );
   if (s < 0) panic(__FILE__,"move_to_new_mem: can't copy data", s);
 
   /* Copy stack segement to new mem */
-  printf("Copy stack segement to new mem\n");
   s = sys_abscopy(
-    (phys_bytes) (rmp->mp_seg[S].mem_phys << CLICK_SHIFT), 
-    (phys_bytes) ((new_base + new_size - rmp->mp_seg[S].mem_len) << CLICK_SHIFT), 
-    (phys_bytes) (rmp->mp_seg[S].mem_len << CLICK_SHIFT)
+    (phys_bytes) ((rmp->mp_seg[D].mem_phys + old_size) << CLICK_SHIFT), 
+    (phys_bytes) ((new_base + old_size) << CLICK_SHIFT), 
+    (phys_bytes) (old_size << CLICK_SHIFT)
   );
   if (s < 0) panic(__FILE__,"move_to_new_mem: can't copy stack", s);
 
   /* Notify kernel new memory map is set */
-  printf("Notify kernel for new memory map\n");
   old_base = rmp->mp_seg[D].mem_phys;
   rmp->mp_seg[D].mem_phys = new_base;
   rmp->mp_seg[S].mem_phys = new_base + new_size - rmp->mp_seg[S].mem_len;
-  sys_newmap(rmp->mp_endpoint, rmp->mp_seg);
+  rmp->mp_seg[D].mem_vir = 0;
+  rmp->mp_seg[S].mem_vir = new_size - rmp->mp_seg[S].mem_len;
+  s = sys_newmap(rmp->mp_endpoint, rmp->mp_seg);
+  if (s != OK) panic(__FILE__,"move_to_new_mem: newmap failed", s);
 
   /* Free memory */
-  printf("Free old memory\n");
   free_mem(old_base, old_size);
 
   return (OK);
@@ -125,11 +124,13 @@ vir_bytes sp;			/* new value of sp */
   register struct mem_map *mem_sp, *mem_dp;
   vir_clicks sp_click, gap_base, lower, old_clicks;
   int changed, r, ft;
+  int moved;
   long base_of_stack, delta;	/* longs avoid certain problems */
 
   mem_dp = &rmp->mp_seg[D];	/* pointer to data segment map */
   mem_sp = &rmp->mp_seg[S];	/* pointer to stack segment map */
   changed = 0;			/* set when either segment changed */
+  moved = 0;                /* set when segment is moved */
 
   if (mem_sp->mem_len == 0) return(OK);	/* don't bother init */
 
@@ -152,7 +153,6 @@ vir_bytes sp;			/* new value of sp */
   }
 
   /* Update data length (but not data orgin) on behalf of brk() system call. */
-  printf("Update data length (but not data orgin)\n");
   old_clicks = mem_dp->mem_len;
   if (data_clicks != mem_dp->mem_len) {
 	mem_dp->mem_len = data_clicks;
@@ -160,7 +160,6 @@ vir_bytes sp;			/* new value of sp */
   }
 
   /* Update stack length and origin due to change in stack pointer. */
-  printf("Update stack length and origin\n");
   if (delta > 0) {
 	mem_sp->mem_vir -= delta;
 	mem_sp->mem_phys -= delta;
@@ -169,7 +168,6 @@ vir_bytes sp;			/* new value of sp */
   }
 
   /* Do the new data and stack segment sizes fit in the address space? */
-  printf("Do the new data and stack segment sizes fit in the address space?\n");
   ft = (rmp->mp_flags & SEPARATE);
 #if (CHIP == INTEL && _WORD_SIZE == 2)
   r = size_ok(ft, rmp->mp_seg[T].mem_len, rmp->mp_seg[D].mem_len, 
@@ -186,7 +184,6 @@ vir_bytes sp;			/* new value of sp */
   }
 
   /* New sizes don't fit or require too many page/segment registers. Restore.*/
-  printf("Call brk failed, restore\n");
   if (changed & DATA_CHANGED) mem_dp->mem_len = old_clicks;
   if (changed & STACK_CHANGED) {
 	mem_sp->mem_vir += delta;
